@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link
+        href="https://fonts.googleapis.com/css?family=Poppins:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <main class="main-Container">
+        <div class="initial-state">
+            <div class="state-content">
+                <div class="img-container">
+                    <img src="./images/Group_4.svg" alt="images">
+                </div>
+                <button class="start-now">Start Now > > ></button>
+                <p class="highest-score"></p>
+            </div>
+        </div>
+
+        <div class="quiz-state">
+            <div class="quiz-state-content">
+                <div class="header-section">
+                    <div class="quiz-logo">
+                        <img src="./images/Group_4.svg" alt="">
+                    </div>
+                    <div class="right-section">
+                        <div class="volume-icon">
+                            <img src="./images/icon _Volume_mute.svg" alt="image">
+                        </div>
+                        <div class="question-count"></div>
+                    </div>
+                </div>
+                <div class="question-container">
+                    <div class="question"></div>
+                </div>
+                <div class="timer"></div>
+                <div class="options-container">
+                    <div class="option option-1" id="0">
+                        <span></span>
+                    </div>
+                    <div class="option option-2" id="1">
+                        <span></span>
+                    </div>
+                    <div class="option option-3" id="2">
+                        <span></span>
+                    </div>
+                    <div class="option option-4" id="3">
+                        <span></span>
+                    </div>
+                </div>
+                <p class="next">Next ></p>
+            </div>
+        </div>
+
+        <div class="result-state">
+            <div class="result-state-content">
+                <div id="print-result">
+                    <div class="result-header">
+                        <img src="./images/Group_4.svg" alt="image">
+                        <h2>Result</h2>
+                    </div>
+                    <div class="final-result">
+                        <div class="attempted-questions"></div>
+                    </div>
+                    <div class="percentage"></div>
+                    <p class="quote">“Keep learning, you have a good score!”</p>
+                </div>
+                <button class="retry-btn">&lt; &lt; &lt; Retry</button>
+                <div class="social-links">
+                    <p>Share Your Score:</p>
+                    <div class="icons">
+                        <img src="./images/linkedin.svg" class="linkedin" alt="image">
+                        <img src="./images/twitter.svg" class="twitter" alt="image">
+                        <img src="./images/instagram.svg" class="insta" alt="image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
