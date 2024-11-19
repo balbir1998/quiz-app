@@ -230,9 +230,7 @@ const linkedin = document.querySelector(".linkedin");
 
             options.forEach(option => {
                 option.classList.remove("correct-ans", "wrong-ans");
-                if (option.lastElementChild.classList.contains("result")) {
-                    option.lastElementChild.remove();
-                };
+                if (option.lastElementChild.classList.contains("result")) option.lastElementChild.remove();
                 option.firstElementChild.innerText = questions[quizData.currentQuesNo].choices[option.id];
             });
 
@@ -326,44 +324,33 @@ const linkedin = document.querySelector(".linkedin");
     }
 
     function changeBackgroundColor(minute, second) {
-        let halfSeconds;
-        let oneSixthSeconds;
+        let halfMilliSeconds;
+        let oneSixthMilliSeconds;
 
-        let id1 = (() => {
-            if (!minute) {
-                halfSeconds = (second * 1000) / 2;
+        if (!minute) {
+            halfMilliSeconds = (second * 1000) / 2;
+            oneSixthMilliSeconds = (second * 1000) * (5 / 6);
+        } else {
+            if (!second) {
+                halfMilliSeconds = ((minute * 60) * 1000) / 2;
+                oneSixthMilliSeconds = ((minute * 60) * 1000) * (5 / 6);
             } else {
-                if (!second) {
-                    halfSeconds = ((minute * 60) * 1000) / 2;
-                } else {
-                    halfSeconds = ((minute * 60 + second) * 1000) / 2;
-                }
+                halfMilliSeconds = ((minute * 60 + second) * 1000) / 2;
+                oneSixthMilliSeconds = ((minute * 60 + second) * 1000) * (5 / 6);
             }
-            let id = setTimeout(() => {
-                quizState.classList.add("beige-background");
-                timer.classList.add("golden-background");
-                nextQues.classList.add("golden-text");
-            }, halfSeconds);
-            return id;
-        })();
+        }
 
-        let id2 = (() => {
-            if (!minute) {
-                oneSixthSeconds = (second * 1000) * (5 / 6);
-            } else {
-                if (!second) {
-                    oneSixthSeconds = ((minute * 60) * 1000) * (5 / 6);
-                } else {
-                    oneSixthSeconds = ((minute * 60 + second) * 1000) * (5 / 6);
-                }
-            }
-            let id = setTimeout(() => {
-                quizState.classList.replace("beige-background", "paleChestnut-background");
-                timer.classList.replace("golden-background", "red-background");
-                nextQues.classList.replace("golden-text", "red-text");
-            }, oneSixthSeconds);
-            return id;
-        })();
+        let id1 = setTimeout(() => {
+            quizState.classList.add("beige-background");
+            timer.classList.add("golden-background");
+            nextQues.classList.add("golden-text");
+        }, halfMilliSeconds);
+
+        let id2 = setTimeout(() => {
+            quizState.classList.replace("beige-background", "paleChestnut-background");
+            timer.classList.replace("golden-background", "red-background");
+            nextQues.classList.replace("golden-text", "red-text");
+        }, oneSixthMilliSeconds);
 
         return { setTimeoutId1: id1, setTimeoutId2: id2 };
     }
