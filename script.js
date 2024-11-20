@@ -74,9 +74,8 @@ const quote = document.querySelector(".quote");
             quizData.currentQuesNo = 0;
             quizData.score = 0;
             quizData.questionAttempt = false;
-            localStorage.setItem("quizData", JSON.stringify(quizData));
+            updateLocalStorage();
         } else {
-            mainContainer.classList.add("active");
             quizStateFunc();
         }
     }
@@ -89,12 +88,13 @@ const quote = document.querySelector(".quote");
     }
 
     startNow.addEventListener("click", () => {
-        mainContainer.classList.add("active");
         quizStateFunc();
     });
 
     function quizStateFunc() {
         const timerIds = {};
+
+        mainContainer.classList.add("active");
         questionElement.innerText = questions[quizData.currentQuesNo].question;
         if (questions[quizData.currentQuesNo].desc) {
             const span = document.createElement("span");
@@ -126,11 +126,11 @@ const quote = document.querySelector(".quote");
             if (quizData.isMute) {
                 volumeIcon.firstElementChild.src = "./images/icon _Volume.svg";
                 quizData.isMute = false;
-                localStorage.setItem("quizData", JSON.stringify(quizData));
+                updateLocalStorage();
             } else {
                 volumeIcon.firstElementChild.src = "./images/icon _Volume_mute.svg";
                 quizData.isMute = true;
-                localStorage.setItem("quizData", JSON.stringify(quizData));
+                updateLocalStorage();
             }
         });
 
@@ -179,7 +179,7 @@ const quote = document.querySelector(".quote");
             clearTimer();
             quizData.currentQuesNo++;
             quizData.questionAttempt = true;
-            localStorage.setItem("quizData", JSON.stringify(quizData));
+            updateLocalStorage();
         };
 
         function next() {
@@ -197,7 +197,7 @@ const quote = document.querySelector(".quote");
             if (!quizData.questionAttempt) {
                 clearTimer();
                 quizData.currentQuesNo++;
-                localStorage.setItem("quizData", JSON.stringify(quizData));
+                updateLocalStorage();
                 optionsContainer.removeEventListener("click", ansCheck);
 
                 if (quizData.currentQuesNo >= questions.length) {
@@ -206,7 +206,7 @@ const quote = document.querySelector(".quote");
                 };
             } else {
                 quizData.questionAttempt = false;
-                localStorage.setItem("quizData", JSON.stringify(quizData));
+                updateLocalStorage();
             };
 
             updateQuestion();
@@ -274,8 +274,8 @@ const quote = document.querySelector(".quote");
             }
 
             if (quizData.score > quizData.highScore) {
-                quizData.highScore = quizData.score
-                localStorage.setItem("quizData", JSON.stringify(quizData));
+                quizData.highScore = quizData.score;
+                updateLocalStorage();
             };
         }
 
@@ -286,7 +286,7 @@ const quote = document.querySelector(".quote");
             quizData.currentQuesNo = 0;
             quizData.questionAttempt = false;
             quizData.score = 0;
-            localStorage.setItem("quizData", JSON.stringify(quizData));
+            updateLocalStorage();
 
             updateQuestion();
         }
@@ -343,5 +343,8 @@ const quote = document.querySelector(".quote");
             if (timerIds.timeoutId2) clearTimeout(timerIds.timeoutId2);
         }
 
+    }
+    function updateLocalStorage() {
+        localStorage.setItem("quizData", JSON.stringify(quizData));
     }
 })();
