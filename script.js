@@ -12,8 +12,7 @@ const nextQues = document.querySelector(".next");
 const retryBtn = document.querySelector(".retry-btn");
 const attemptedQues = document.querySelector(".attempted-questions");
 const userPercentage = document.querySelector(".percentage");
-const linkedin = document.querySelector(".linkedin");
-
+const quote = document.querySelector(".quote");
 (() => {
     let quizData = JSON.parse(localStorage.getItem("quizData")) || {
         currentQuesNo: 0,
@@ -261,12 +260,29 @@ const linkedin = document.querySelector(".linkedin");
             let percentage = parseInt(quizData.score / quesLength * 100);
             let cubicDegree = 360 - (percentage / 100 * 360);
             let degree = 360;
-            setInterval(() => {
-                degree--;
-                if (degree < cubicDegree) return;
+            if (degree === cubicDegree) {
                 document.documentElement.style.cssText = `--cubic-degree: ${degree}deg`;
-            }, 5)
+            } else {
+                setInterval(() => {
+                    degree--;
+                    if (degree < cubicDegree) return;
+                    document.documentElement.style.cssText = `--cubic-degree: ${degree}deg`;
+                }, 5)
+            }
+
             userPercentage.innerText = `${percentage}%`;
+
+            if (percentage >= 70) {
+                quote.innerText = "“Keep learning, you have a good score!”";
+            } else if (percentage > 60) {
+                quote.innerText = "“Good effort! Keep learning”";
+            } else if (percentage >= 50) {
+                quote.innerText = "“You can do better, keep improving”";
+            } else if (percentage >= 33) {
+                quote.innerText = "“Put more effort to improve your score”";
+            } else {
+                quote.innerText = "“You need to work hard”";
+            }
 
             if (quizData.score > quizData.highScore) {
                 quizData.highScore = quizData.score
