@@ -260,7 +260,6 @@ const linkedin = document.querySelector(".linkedin");
 
             let percentage = parseInt(quizData.score / quesLength * 100);
             let cubicDegree = 360 - (percentage / 100 * 360);
-            document.documentElement.style.cssText = `--cubic-degree: ${cubicDegree}deg`;
             let degree = 360;
             setInterval(() => {
                 degree--;
