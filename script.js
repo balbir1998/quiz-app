@@ -13,8 +13,9 @@ const retryBtn = document.querySelector(".retry-btn");
 const attemptedQues = document.querySelector(".attempted-questions");
 const userPercentage = document.querySelector(".percentage");
 const quote = document.querySelector(".quote");
+
 (() => {
-    let quizData = JSON.parse(localStorage.getItem("quizData")) || {
+    const quizData = JSON.parse(localStorage.getItem("quizData")) || {
         currentQuesNo: 0,
         score: 0,
         questionAttempt: false,
@@ -93,9 +94,10 @@ const quote = document.querySelector(".quote");
     });
 
     function quizStateFunc() {
+        const timerIds = {};
         questionElement.innerText = questions[quizData.currentQuesNo].question;
         if (questions[quizData.currentQuesNo].desc) {
-            let span = document.createElement("span");
+            const span = document.createElement("span");
             span.classList.add("unselectable", "break-after-semicolon");
             let formattedText = questions[quizData.currentQuesNo].desc.replace(";", ';\n');
             span.textContent = formattedText;
@@ -107,11 +109,8 @@ const quote = document.querySelector(".quote");
 
         let minute = questions[quizData.currentQuesNo].duration.minute;
         let second = questions[quizData.currentQuesNo].duration.second;
-
         (second >= 10) ? timer.innerText = `0${minute}:${second}` : timer.innerText = `0${minute}:0${second}`;
-
-        let intervalId = setTimer(minute, second);
-        let timoutIds = changeBackgroundColor(minute, second);
+        setTimer();
 
         let quesLength = (questions.length >= 10) ? questions.length : `0${questions.length}`;
         let quesNo = (quizData.currentQuesNo + 1 >= 10) ? quizData.currentQuesNo + 1 : `0${quizData.currentQuesNo + 1}`;
@@ -145,7 +144,9 @@ const quote = document.querySelector(".quote");
             let firstChild = e.target.closest(".option");
             if (!firstChild) return;
 
-            if (parseInt(firstChild.id) === questions[quizData.currentQuesNo].ansIndex) {
+            let isCorrect = parseInt(firstChild.id) === questions[quizData.currentQuesNo].ansIndex
+
+            if (isCorrect) {
                 quizData.score++;
                 firstChild.classList.add("correct-ans");
 
@@ -166,7 +167,7 @@ const quote = document.querySelector(".quote");
 
                 let wrongAns = document.createElement("div");
                 wrongAns.classList.add("result");
-                let span = document.createElement("span");
+                const span = document.createElement("span");
                 span.innerText = "You Choose";
                 wrongAns.append(span, wrongImage);
                 firstChild.append(wrongAns);
@@ -175,23 +176,26 @@ const quote = document.querySelector(".quote");
             };
 
             optionsContainer.removeEventListener("click", ansCheck);
-
-            clearInterval(intervalId);
-            if (timoutIds.setTimeoutId1) clearTimeout(timoutIds.setTimeoutId1);
-            if (timoutIds.setTimeoutId2) clearTimeout(timoutIds.setTimeoutId2);
-
+            clearTimer();
             quizData.currentQuesNo++;
             quizData.questionAttempt = true;
             localStorage.setItem("quizData", JSON.stringify(quizData));
         };
 
         function next() {
+            quizState.classList.remove("beige-background", "paleChestnut-background");
+            timer.classList.remove("golden-background", "red-background");
+            nextQues.classList.remove("golden-text", "red-text");
+
+            window.scrollTo({ top: 0 });
+
             if (quizData.currentQuesNo >= questions.length) {
                 finalState();
                 return;
             };
 
             if (!quizData.questionAttempt) {
+                clearTimer();
                 quizData.currentQuesNo++;
                 localStorage.setItem("quizData", JSON.stringify(quizData));
                 optionsContainer.removeEventListener("click", ansCheck);
@@ -205,22 +209,16 @@ const quote = document.querySelector(".quote");
                 localStorage.setItem("quizData", JSON.stringify(quizData));
             };
 
-            clearInterval(intervalId);
-            if (timoutIds.setTimeoutId1) clearTimeout(timoutIds.setTimeoutId1);
-            if (timoutIds.setTimeoutId2) clearTimeout(timoutIds.setTimeoutId2);
+            updateQuestion();
+        }
 
-            quizState.classList.remove("beige-background", "paleChestnut-background");
-            timer.classList.remove("golden-background", "red-background");
-            nextQues.classList.remove("golden-text", "red-text");
-
-            window.scrollTo({ top: 0 });
-
+        function updateQuestion() {
             quesNo = (quizData.currentQuesNo + 1 >= 10) ? quizData.currentQuesNo + 1 : `0${quizData.currentQuesNo + 1}`;
             questionCount.innerText = `${quesNo}/${quesLength}`;
 
             questionElement.innerText = questions[quizData.currentQuesNo].question;
             if (questions[quizData.currentQuesNo].desc) {
-                let span = document.createElement("span");
+                const span = document.createElement("span");
                 span.classList.add("unselectable", "break-after-semicolon");
                 let formattedText = questions[quizData.currentQuesNo].desc.replace(";", ';\n');
                 span.textContent = formattedText;
@@ -239,20 +237,11 @@ const quote = document.querySelector(".quote");
             second = questions[quizData.currentQuesNo].duration.second;
             (second >= 10) ? timer.innerText = `0${minute}:${second}` : timer.innerText = `0${minute}:0${second}`;
 
-            intervalId = setTimer(minute, second);
-            timoutIds = changeBackgroundColor(minute, second);
+            setTimer();
         }
 
         function finalState() {
-            window.scrollTo({ top: 0 });
             mainContainer.classList.replace("active", "final-state");
-            quizState.classList.remove("beige-background", "paleChestnut-background");
-            timer.classList.remove("golden-background", "red-background");
-            nextQues.classList.remove("golden-text", "red-text");
-
-            clearInterval(intervalId);
-            if (timoutIds.setTimeoutId1) clearTimeout(timoutIds.setTimeoutId1);
-            if (timoutIds.setTimeoutId2) clearTimeout(timoutIds.setTimeoutId2);
 
             let attemptQueValue = (attemptedQues >= 10) ? quizData.score : `0${quizData.score}`;
             attemptedQues.innerText = `${attemptQueValue}/${quesLength}`;
@@ -274,7 +263,7 @@ const quote = document.querySelector(".quote");
 
             if (percentage >= 70) {
                 quote.innerText = "“Keep learning, you have a good score!”";
-            } else if (percentage > 60) {
+            } else if (percentage >= 60) {
                 quote.innerText = "“Good effort! Keep learning”";
             } else if (percentage >= 50) {
                 quote.innerText = "“You can do better, keep improving”";
@@ -299,81 +288,60 @@ const quote = document.querySelector(".quote");
             quizData.score = 0;
             localStorage.setItem("quizData", JSON.stringify(quizData));
 
-            quesNo = (quizData.currentQuesNo + 1 >= 10) ? quizData.currentQuesNo + 1 : `0${quizData.currentQuesNo + 1}`;
-            questionCount.innerText = `${quesNo}/${quesLength}`;
-
-            questionElement.innerText = questions[quizData.currentQuesNo].question;
-            if (questions[quizData.currentQuesNo].desc) {
-                let span = document.createElement("span");
-                span.classList.add("unselectable");
-                span.innerText = questions[quizData.currentQuesNo].desc;
-                questionElement.append(span);
-            }
-
-            options.forEach(option => {
-                option.classList.remove("correct-ans", "wrong-ans");
-                if (option.lastElementChild.classList.contains("result")) option.lastElementChild.remove();
-                option.firstElementChild.innerText = questions[quizData.currentQuesNo].choices[option.id];
-            });
-
-            optionsContainer.addEventListener("click", ansCheck);
-
-            minute = questions[quizData.currentQuesNo].duration.minute;
-            second = questions[quizData.currentQuesNo].duration.second;
-            (second >= 10) ? timer.innerText = `0${minute}:${second}` : timer.innerText = `0${minute}:0${second}`;
-
-            intervalId = setTimer(minute, second);
-            timoutIds = changeBackgroundColor(minute, second);
+            updateQuestion();
         }
 
-    }
+        function setTimer() {
+            let halfMilliSeconds;
+            let oneSixthMilliSeconds;
 
-    function setTimer(minute, second) {
-        let id = setInterval(() => {
-            second--;
-            if (minute === 0 && second < 0) {
-                nextQues.click();
-                return;
-            };
-            if (second < 0) {
-                minute--;
-                second = 59;
-            };
-            (second >= 10) ? timer.innerText = `0${minute}:${second}` : timer.innerText = `0${minute}:0${second}`;
-        }, 1000)
-        return id;
-    }
-
-    function changeBackgroundColor(minute, second) {
-        let halfMilliSeconds;
-        let oneSixthMilliSeconds;
-
-        if (!minute) {
-            halfMilliSeconds = (second * 1000) / 2;
-            oneSixthMilliSeconds = (second * 1000) * (5 / 6);
-        } else {
-            if (!second) {
-                halfMilliSeconds = ((minute * 60) * 1000) / 2;
-                oneSixthMilliSeconds = ((minute * 60) * 1000) * (5 / 6);
+            if (!minute) {
+                halfMilliSeconds = (second * 1000) / 2;
+                oneSixthMilliSeconds = (second * 1000) * (5 / 6);
             } else {
-                halfMilliSeconds = ((minute * 60 + second) * 1000) / 2;
-                oneSixthMilliSeconds = ((minute * 60 + second) * 1000) * (5 / 6);
+                if (!second) {
+                    halfMilliSeconds = ((minute * 60) * 1000) / 2;
+                    oneSixthMilliSeconds = ((minute * 60) * 1000) * (5 / 6);
+                } else {
+                    halfMilliSeconds = ((minute * 60 + second) * 1000) / 2;
+                    oneSixthMilliSeconds = ((minute * 60 + second) * 1000) * (5 / 6);
+                }
             }
+
+            timerIds.intervalId = setInterval(() => {
+                second--;
+                if (minute === 0 && second < 0) {
+                    nextQues.click();
+                    return;
+                };
+                if (second < 0) {
+                    minute--;
+                    second = 59;
+                };
+                (second >= 10) ? timer.innerText = `0${minute}:${second}` : timer.innerText = `0${minute}:0${second}`;
+            }, 1000)
+
+            timerIds.timeoutId1 = setTimeout(() => {
+                quizState.classList.add("beige-background");
+                timer.classList.add("golden-background");
+                nextQues.classList.add("golden-text");
+                timerIds.timeoutId1 = null;
+            }, halfMilliSeconds);
+
+            timerIds.timeoutId2 = setTimeout(() => {
+                quizState.classList.replace("beige-background", "paleChestnut-background");
+                timer.classList.replace("golden-background", "red-background");
+                nextQues.classList.replace("golden-text", "red-text");
+                timerIds.timeoutId2 = null;
+            }, oneSixthMilliSeconds);
+            return timerIds;
         }
 
-        let id1 = setTimeout(() => {
-            quizState.classList.add("beige-background");
-            timer.classList.add("golden-background");
-            nextQues.classList.add("golden-text");
-        }, halfMilliSeconds);
+        function clearTimer() {
+            clearInterval(timerIds.intervalId);
+            if (timerIds.timeoutId1) clearTimeout(timerIds.timeoutId1);
+            if (timerIds.timeoutId2) clearTimeout(timerIds.timeoutId2);
+        }
 
-        let id2 = setTimeout(() => {
-            quizState.classList.replace("beige-background", "paleChestnut-background");
-            timer.classList.replace("golden-background", "red-background");
-            nextQues.classList.replace("golden-text", "red-text");
-        }, oneSixthMilliSeconds);
-
-        return { setTimeoutId1: id1, setTimeoutId2: id2 };
     }
-
 })();
