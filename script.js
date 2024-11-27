@@ -59,7 +59,6 @@ const quote = document.querySelector(".quote");
         }
     ];
 
-
     window.addEventListener('load', () => {
         setTimeout(() => {
             document.getElementById("loader").style.display = "none";
@@ -104,7 +103,7 @@ const quote = document.querySelector(".quote");
             questionElement.append(span);
         }
         options.forEach(option => {
-            option.firstElementChild.innerText = questions[quizData.currentQuesNo].choices[option.id]
+            option.firstElementChild.innerText = questions[quizData.currentQuesNo].choices[option.id];
         });
 
         let minute = questions[quizData.currentQuesNo].duration.minute;
@@ -144,7 +143,7 @@ const quote = document.querySelector(".quote");
             let firstChild = e.target.closest(".option");
             if (!firstChild) return;
 
-            let isCorrect = parseInt(firstChild.id) === questions[quizData.currentQuesNo].ansIndex
+            let isCorrect = parseInt(firstChild.id) === questions[quizData.currentQuesNo].ansIndex;
 
             if (isCorrect) {
                 quizData.score++;
