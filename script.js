@@ -220,6 +220,11 @@ const quote = document.querySelector(".quote");
     function quizStateFunc() {
         const timerIds = {};
 
+        if (quizData.questionAttempt) {
+            quizData.questionAttempt = false;
+            updateLocalStorage();
+        }
+
         mainContainer.classList.add("active");
         questionElement.innerText = questions[quizData.currentQuesNo].question;
         if (questions[quizData.currentQuesNo].desc) {
